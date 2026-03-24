@@ -58,110 +58,149 @@ export default function LiveGames() {
     return 'Gleich!'
   }
 
-  const GameCard = ({ game, status = 'upcoming' }) => (
-    <div style={{
-      backgroundColor: 'white',
-      borderRadius: '14px',
-      padding: '20px',
-      marginBottom: '12px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-      border: status === 'live' ? '2px solid #ffc107' : status === 'finished' ? '2px solid #28a745' : '1px solid #e0e0e0',
-      transition: 'all 0.3s ease',
-      position: 'relative',
-      overflow: 'hidden'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-4px)'
-      e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)'
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)'
-      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'
-    }}
-    >
-      {/* Status Badge */}
+  const getPhaseInfo = (game) => {
+    if (game.phase === 'group') {
+      return {
+        label: `Gruppe ${game.group_name || '?'}`,
+        color: '#f093fb',
+        icon: '⚽'
+      }
+    } else if (game.phase === 'semifinals') {
+      return {
+        label: 'Halbfinale',
+        color: '#4facfe',
+        icon: '🥈'
+      }
+    } else if (game.phase === 'final') {
+      return {
+        label: 'Finale',
+        color: '#ff6b6b',
+        icon: '🏆'
+      }
+    }
+    return {
+      label: game.phase,
+      color: '#667eea',
+      icon: '🎯'
+    }
+  }
+
+  const GameCard = ({ game, status = 'upcoming' }) => {
+    const phaseInfo = getPhaseInfo(game)
+
+    return (
       <div style={{
-        position: 'absolute',
-        top: '15px',
-        right: '15px',
-        padding: '6px 14px',
-        borderRadius: '20px',
-        fontSize: '12px',
-        fontWeight: '700',
-        letterSpacing: '0.5px',
-        backgroundColor: status === 'live' ? '#ffc107' : status === 'finished' ? '#28a745' : '#e0e0e0',
-        color: status === 'finished' ? 'white' : 'black'
-      }}>
-        {status === 'live' ? '🔴 LIVE' : status === 'finished' ? '✅ FERTIG' : '⏳ GEPLANT'}
-      </div>
-
-      {/* Teams */}
-      <div style={{ marginBottom: '15px' }}>
-        <p style={{
-          fontSize: '18px',
-          fontWeight: '800',
-          margin: '0',
-          color: '#1a1a2e'
-        }}>
-          {game.team_a} vs {game.team_b}
-        </p>
-      </div>
-
-      {/* Gewinner (wenn fertig) */}
-      {status === 'finished' && game.winner && (
+        backgroundColor: 'white',
+        borderRadius: '14px',
+        padding: '22px',
+        marginBottom: '14px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+        border: status === 'live' ? '2px solid #ffc107' : status === 'finished' ? '2px solid #28a745' : '1px solid #e0e0e0',
+        transition: 'all 0.3s ease',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-4px)'
+        e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'
+      }}
+      >
+        {/* Status Badge */}
         <div style={{
-          backgroundColor: 'rgba(40, 167, 69, 0.1)',
-          padding: '12px',
-          borderRadius: '10px',
-          marginBottom: '12px',
-          borderLeft: '4px solid #28a745'
+          position: 'absolute',
+          top: '15px',
+          right: '15px',
+          padding: '6px 14px',
+          borderRadius: '20px',
+          fontSize: '12px',
+          fontWeight: '700',
+          letterSpacing: '0.5px',
+          backgroundColor: status === 'live' ? '#ffc107' : status === 'finished' ? '#28a745' : '#e0e0e0',
+          color: status === 'finished' ? 'white' : 'black'
         }}>
-          <p style={{ margin: '0', fontSize: '14px', fontWeight: '700', color: '#28a745' }}>
-            🏆 Gewinner: <strong>{game.winner}</strong>
+          {status === 'live' ? '🔴 LIVE' : status === 'finished' ? '✅ FERTIG' : '⏳ GEPLANT'}
+        </div>
+
+        {/* Teams */}
+        <div style={{ marginBottom: '16px', paddingRight: '100px' }}>
+          <p style={{
+            fontSize: '18px',
+            fontWeight: '800',
+            margin: '0',
+            color: '#1a1a2e',
+            lineHeight: '1.4'
+          }}>
+            {game.team_a} <span style={{ color: '#999', fontWeight: '600' }}>vs</span> {game.team_b}
           </p>
         </div>
-      )}
 
-      {/* Zeit Info */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        fontSize: '13px',
-        color: '#666',
-        fontWeight: '500'
-      }}>
-        <span>📅 {formatTime(game.start_time)}</span>
-        {status === 'upcoming' && (
-          <span style={{
-            backgroundColor: '#667eea',
-            color: 'white',
-            padding: '4px 10px',
-            borderRadius: '6px',
-            fontWeight: '700',
-            fontSize: '12px'
+        {/* Gewinner (wenn fertig) */}
+        {status === 'finished' && game.winner && (
+          <div style={{
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            padding: '12px',
+            borderRadius: '10px',
+            marginBottom: '14px',
+            borderLeft: '4px solid #28a745'
           }}>
-            {getTimeUntil(game.start_time)}
-          </span>
+            <p style={{ margin: '0', fontSize: '13px', fontWeight: '700', color: '#28a745' }}>
+              🏆 Gewinner: <strong>{game.winner}</strong>
+            </p>
+          </div>
         )}
-      </div>
 
-      {/* Phase Badge */}
-      <div style={{
-        marginTop: '12px',
-        display: 'inline-block',
-        padding: '4px 12px',
-        backgroundColor: game.phase === 'group' ? '#f093fb' : '#4facfe',
-        color: 'white',
-        borderRadius: '6px',
-        fontSize: '11px',
-        fontWeight: '700',
-        letterSpacing: '0.5px'
-      }}>
-        {game.phase === 'group' ? '⚽ GRUPPE' : game.phase === 'semifinals' ? '🥈 HALBFINALE' : '🏆 FINALE'}
+        {/* Zeit + Phase Info */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+          fontSize: '13px',
+          color: '#666',
+          fontWeight: '500'
+        }}>
+          <span>📅 {formatTime(game.start_time)}</span>
+          
+          {/* Phase Badge - mit Gruppe oder Phase-Name */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            backgroundColor: phaseInfo.color,
+            color: 'white',
+            borderRadius: '8px',
+            fontWeight: '700',
+            fontSize: '12px',
+            letterSpacing: '0.3px'
+          }}>
+            <span>{phaseInfo.icon}</span>
+            {phaseInfo.label}
+          </div>
+
+          {/* Time until */}
+          {status === 'upcoming' && (
+            <span style={{
+              backgroundColor: '#667eea',
+              color: 'white',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              fontWeight: '700',
+              fontSize: '12px',
+              marginLeft: 'auto'
+            }}>
+              {getTimeUntil(game.start_time)}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div style={{
@@ -186,7 +225,7 @@ export default function LiveGames() {
             fontSize: '36px',
             fontWeight: '900'
           }}>
-            🎮 Live Spiele
+            📡 Live Anzeige
           </h1>
           <p style={{
             margin: '10px 0 0 0',
@@ -202,10 +241,19 @@ export default function LiveGames() {
         {liveGames.length > 0 && (
           <section style={{ marginBottom: '40px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
-              <span style={{ fontSize: '28px' }}>🔴</span>
+              <span style={{
+                fontSize: '28px',
+                animation: 'pulse 1.5s ease-in-out infinite'
+              }}>🔴</span>
               <h2 style={{ margin: '0', color: '#1a1a2e', fontSize: '24px', fontWeight: '800' }}>
                 Jetzt Live ({liveGames.length})
               </h2>
+              <style>{`
+                @keyframes pulse {
+                  0%, 100% { opacity: 1; }
+                  50% { opacity: 0.5; }
+                }
+              `}</style>
             </div>
             {liveGames.map((game) => (
               <GameCard key={game.id} game={game} status="live" />
@@ -221,6 +269,18 @@ export default function LiveGames() {
               <h2 style={{ margin: '0', color: '#1a1a2e', fontSize: '24px', fontWeight: '800' }}>
                 Kommende Spiele ({upcomingGames.length})
               </h2>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(102, 126, 234, 0.05)',
+              borderLeft: '4px solid #667eea',
+              padding: '14px 16px',
+              borderRadius: '8px',
+              marginBottom: '18px',
+              fontSize: '13px',
+              color: '#666',
+              fontWeight: '500'
+            }}>
+              ℹ️ Spiele sind chronologisch nach Spielbeginn sortiert
             </div>
             {upcomingGames.map((game) => (
               <GameCard key={game.id} game={game} status="upcoming" />
