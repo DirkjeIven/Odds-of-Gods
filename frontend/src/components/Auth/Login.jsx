@@ -147,7 +147,7 @@ export default function Login() {
             fontWeight: '500',
             letterSpacing: '0.5px'
           }}>
-            🎲 FLUNKY-TURNIER WETT-PLATTFORM
+            FLUNKY-TURNIER TIPP-PLATTFORM
           </p>
         </div>
 
