@@ -120,14 +120,25 @@ export default function Dashboard() {
         flexWrap: 'wrap',
         gap: '20px'
       }}>
-        <div>
-          <h1 style={{ margin: '0 0 5px 0', color: '#333', fontSize: '28px' }}>
-            🎲 Willkommen, {profile.username}!
-          </h1>
-          <p style={{ margin: '0', color: '#666', fontSize: '14px' }}>
-            Viel Erfolg beim Tippen! 🍀
-          </p>
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+  <img 
+    src="/images/logo.png"
+    alt="Odds Of Gods Logo"
+    style={{
+      width: '80px',
+      height: '80px',
+      borderRadius: '10px'
+    }}
+  />
+  <div>
+    <h1 style={{ margin: '0 0 5px 0', color: '#333', fontSize: '28px' }}>
+      Willkommen, {profile.username}!
+    </h1>
+    <p style={{ margin: '0', color: '#666', fontSize: '14px' }}>
+      Viel Erfolg beim Tippen! 🍀
+    </p>
+  </div>
+</div>
         <button
           onClick={handleLogout}
           style={{
@@ -217,9 +228,16 @@ export default function Dashboard() {
           padding: '30px',
           boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
         }}>
-          <h2 style={{ margin: '0 0 20px 0', color: '#333' }}>
-            🏆 Top 10 Spieler
-          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+  <img 
+    src="/images/trophy.png"
+    alt="Pokal"
+    style={{ width: '40px', height: '40px' }}
+  />
+  <h2 style={{ margin: '0', color: '#333' }}>
+    Top 10 Spieler
+  </h2>
+</div>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #667eea' }}>
