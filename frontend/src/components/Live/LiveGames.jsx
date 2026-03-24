@@ -63,7 +63,7 @@ export default function LiveGames() {
       return {
         label: `Gruppe ${game.group_name || '?'}`,
         color: '#f093fb',
-        icon: '⚽'
+        icon: ''
       }
     } else if (game.phase === 'semifinals') {
       return {
