@@ -19,35 +19,34 @@ export default function BettingPage() {
   }, [profile])
 
   const fetchGames = async () => {
-    setLoading(true)
-    
-    // Hole alle Spiele die noch nicht gespielt wurden
-    const { data: gamesData, error: gamesError } = await supabase
-      .from('games')
+  setLoading(true)
+  
+  // NUR Spiele die noch nicht live gehen, dürfen gewettet werden!
+  const { data: gamesData, error: gamesError } = await supabase
+    .from('games')
+    .select('*')
+    .eq('status', 'scheduled')  // ← NUR 'scheduled'!
+    .order('start_time', { ascending: true })
+
+  if (!gamesError && gamesData) {
+    setGames(gamesData)
+
+    const { data: betsData, error: betsError } = await supabase
+      .from('bets')
       .select('*')
-      .neq('status', 'finished')
-      .order('start_time', { ascending: true })
+      .eq('user_id', profile.id)
 
-    if (!gamesError && gamesData) {
-      setGames(gamesData)
-
-      // Hole Wetten dieses Benutzers
-      const { data: betsData, error: betsError } = await supabase
-        .from('bets')
-        .select('*')
-        .eq('user_id', profile.id)
-
-      if (!betsError && betsData) {
-        const betMap = {}
-        betsData.forEach((bet) => {
-          betMap[bet.game_id] = bet.predicted_winner
-        })
-        setBets(betMap)
-      }
+    if (!betsError && betsData) {
+      const betMap = {}
+      betsData.forEach((bet) => {
+        betMap[bet.game_id] = bet.predicted_winner
+      })
+      setBets(betMap)
     }
-    
-    setLoading(false)
   }
+  
+  setLoading(false)
+}
 
   const handleBetChange = (gameId, team) => {
     setBets((prev) => ({
