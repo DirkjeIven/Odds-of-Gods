@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../../store/authStore'
 import { supabase } from '../../services/supabaseClient'
+import TeamDetails from './TeamDetails'
 
 export default function AdminPanel() {
   const { profile } = useAuthStore()
@@ -704,6 +705,21 @@ export default function AdminPanel() {
             📊 Team Stats
           </button>
           <button
+            onClick={() => setTab('team-details')}
+            style={{
+              padding: '12px 25px',
+              backgroundColor: tab === 'team-details' ? '#667eea' : 'white',
+              color: tab === 'team-details' ? 'white' : '#333',
+              border: `2px solid ${tab === 'team-details' ? '#667eea' : '#ddd'}`,
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              transition: 'all 0.3s'
+            }}
+          >
+            📊 Team Details
+          </button>
+          <button
             onClick={() => setTab('create-knockouts')}
             style={{
               padding: '12px 25px',
@@ -723,6 +739,7 @@ export default function AdminPanel() {
         {/* Tab Inhalt */}
         {tab === 'ongoing' && <OngoingGames />}
         {tab === 'stats' && <TeamStatsTab />}
+        {tab === 'team-details' && <TeamDetails />}
         {tab === 'create-knockouts' && <CreateKnockouts />}
 
         {/* Gewinner + Stats Modal */}

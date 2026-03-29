@@ -11,7 +11,7 @@ import BettingPage from './components/Betting/BettingPage'
 import LiveGames from './components/Live/LiveGames'
 import AdminPanel from './components/Admin/AdminPanel'
 import Standings from './components/Standings/Standings'
-import GroupStandings from './components/Standings/GroupStandings'
+
 
 // Protected Route - nur angemeldete Benutzer
 function ProtectedRoute({ children }) {
@@ -87,7 +87,7 @@ export default function App() {
           path="/standings"
           element={
             <ProtectedRoute>
-              <GroupStandings />
+              <Standings />
             </ProtectedRoute>
           }
         />

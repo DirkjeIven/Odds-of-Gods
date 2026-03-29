@@ -5,26 +5,11 @@ import { useAuthStore } from '../../store/authStore'
 export default function Standings() {
   const { profile } = useAuthStore()
   const [rankings, setRankings] = useState([])
-  const [groupA, setGroupA] = useState([])
-  const [groupB, setGroupB] = useState([])
   const [userRank, setUserRank] = useState(null)
   const [tab, setTab] = useState('players') // 'players' oder 'groups'
 
   useEffect(() => {
     fetchPlayerRankings()
-    fetchGroupStandings()
-
-    // Real-time Updates
-    const subscription = supabase
-      .channel('profiles')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'profiles' },
-        () => fetchPlayerRankings()
-      )
-      .subscribe()
-
-    return () => subscription.unsubscribe()
   }, [])
 
   const fetchPlayerRankings = async () => {
@@ -38,24 +23,6 @@ export default function Standings() {
       const rank = data.findIndex((p) => p.id === profile?.id) + 1
       setUserRank(rank)
     }
-  }
-
-  const fetchGroupStandings = async () => {
-    const { data } = await supabase
-      .from('team_stats')
-      .select('*')
-      .order('group_name', { ascending: true })
-      .order('wins', { ascending: false })
-
-    if (data) {
-      setGroupA(data.filter((t) => t.group_name === 'A'))
-      setGroupB(data.filter((t) => t.group_name === 'B'))
-    }
-  }
-
-  const calculateEfficiency = (goals, rounds) => {
-    if (rounds === 0) return 0
-    return ((goals * goals) / rounds).toFixed(2)
   }
 
   const getMedalEmoji = (index) => {
@@ -275,6 +242,33 @@ export default function Standings() {
 
   // GROUP STANDINGS TAB
   const GroupStandingsTab = () => {
+    const [groupA, setGroupA] = useState([])
+    const [groupB, setGroupB] = useState([])
+    const [loadingGroups, setLoadingGroups] = useState(true)
+
+    useEffect(() => {
+      fetchGroupStandings()
+    }, [])
+
+    const fetchGroupStandings = async () => {
+      const { data } = await supabase
+        .from('team_stats')
+        .select('*')
+        .order('group_name', { ascending: true })
+        .order('wins', { ascending: false })
+
+      if (data) {
+        setGroupA(data.filter((t) => t.group_name === 'A'))
+        setGroupB(data.filter((t) => t.group_name === 'B'))
+      }
+      setLoadingGroups(false)
+    }
+
+    const calculateAvgTrefferQuote = (goals, rounds) => {
+      if (rounds === 0) return 0
+      return (goals / rounds).toFixed(2)
+    }
+
     const StandingsTable = ({ group, teams }) => (
       <div style={{
         backgroundColor: 'white',
@@ -343,23 +337,7 @@ export default function Standings() {
                   fontWeight: '700',
                   fontSize: '12px',
                   letterSpacing: '0.5px'
-                }}>TREFFER</th>
-                <th style={{
-                  padding: '14px 0',
-                  textAlign: 'center',
-                  color: '#667eea',
-                  fontWeight: '700',
-                  fontSize: '12px',
-                  letterSpacing: '0.5px'
-                }}>RUNDEN</th>
-                <th style={{
-                  padding: '14px 0',
-                  textAlign: 'center',
-                  color: '#667eea',
-                  fontWeight: '700',
-                  fontSize: '12px',
-                  letterSpacing: '0.5px'
-                }}>EFFIZIENZ</th>
+                }}>⌀ TREFFERQUOTE</th>
               </tr>
             </thead>
             <tbody>
@@ -401,31 +379,13 @@ export default function Standings() {
                   <td style={{
                     padding: '14px 0',
                     textAlign: 'center',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
                     color: '#667eea',
-                    fontWeight: '700',
-                    fontSize: '15px'
-                  }}>
-                    {team.total_goals}
-                  </td>
-                  <td style={{
-                    padding: '14px 0',
-                    textAlign: 'center',
-                    color: '#f093fb',
-                    fontWeight: '700',
-                    fontSize: '15px'
-                  }}>
-                    {team.total_rounds}
-                  </td>
-                  <td style={{
-                    padding: '14px 0',
-                    textAlign: 'center',
-                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                    color: '#ff9800',
                     fontWeight: '800',
                     fontSize: '15px',
                     borderRadius: '6px'
                   }}>
-                    {calculateEfficiency(team.total_goals, team.total_rounds)}
+                    {calculateAvgTrefferQuote(team.total_goals, team.total_rounds)}
                   </td>
                 </tr>
               ))}
@@ -434,6 +394,8 @@ export default function Standings() {
         )}
       </div>
     )
+
+    if (loadingGroups) return <p>Lädt Gruppen...</p>
 
     return (
       <div>
