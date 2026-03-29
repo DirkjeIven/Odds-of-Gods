@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../services/supabaseClient'
 import { useAuthStore } from '../../store/authStore'
+import GroupStandings from './GroupStandings'
 
 export default function Standings() {
   const { profile } = useAuthStore()
