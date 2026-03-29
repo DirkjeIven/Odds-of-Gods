@@ -69,7 +69,7 @@ export default function AdminPanel() {
     }
 
     if (!team_a_goals || !team_b_goals || !team_a_rounds || !team_b_rounds) {
-      alert('Bitte alle Werte eingeben (Tore & Runden)!')
+      alert('Bitte alle Werte eingeben (Treffer & Runden)!')
       return
     }
 
@@ -804,7 +804,7 @@ export default function AdminPanel() {
               <div style={{ marginBottom: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '13px' }}>
-                    Tore {selectedGame.team_a}:
+                    Treffer {selectedGame.team_a}:
                   </label>
                   <input
                     type="number"
@@ -823,7 +823,7 @@ export default function AdminPanel() {
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '13px' }}>
-                    Tore {selectedGame.team_b}:
+                    Treffer {selectedGame.team_b}:
                   </label>
                   <input
                     type="number"
